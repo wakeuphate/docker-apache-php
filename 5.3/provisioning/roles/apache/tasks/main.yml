@@ -26,6 +26,7 @@
   shell: a2enmod {{ item }}
   with_items:
     - rewrite
+    - ssl
     - php5
   notify:
     - restart apache
