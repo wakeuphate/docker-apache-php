@@ -3,3 +3,8 @@
   with_items:
     - curl
   tags: common
+  
+- name: Configure entry point
+  template: src=entrypoint.sh dest=/sbin/entrypoint.sh
+  tags: common
+  

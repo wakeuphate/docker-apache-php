@@ -15,7 +15,7 @@
 
     vhosts:
       [
-        { name: 'app', serveradmin: 'admin@localhost', webroot_dir: '/var/www/app/public'}
+        { name: 'app', serveradmin: 'admin@localhost', webroot_dir: '${APACHE_DOC_ROOT}'}
       ]
 
   roles:
