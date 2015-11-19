@@ -1,13 +1,24 @@
 Table of Contents
 -------------------
 
+ * [Remark](#remark)
  * [Installation](#installation)
  * [Quick Start](#quick-start)
  * [Persistence](#developmentpersistence)
+ * [Custom DocumentRoot](#custom-documentroot)
  * [Linked to other container](#linked-to-other-container)
  * [Adding PHP-extension](#adding-php-extension) 
  * [Logging](#logging)
  * [Out of the box](#out-of-the-box)
+
+Remark
+-------------------
+Based on https://github.com/romeOz/docker-apache-php
+
+Additional features:
+
+ * HTTPS virtual host that uses ssl-cert-snakeoil self-signed Ubuntu certificate
+ * APACHE_DOC_ROOT environment variable
 
 Installation
 -------------------
@@ -16,19 +27,19 @@ Installation
  * Pull the latest version of the image.
  
 ```bash
-docker pull romeoz/docker-apache-php
+docker pull ruslangetmansky/docker-apache-php
 ```
 
 or other versions (5.6, 5.5, 5.4 or 5.3):
 
 ```bash
-docker pull romeoz/docker-apache-php:5.4
+docker pull ruslangetmansky/docker-apache-php:5.4
 ```
 
 Alternately you can build the image yourself.
 
 ```bash
-git clone https://github.com/romeoz/docker-apache-php.git
+git clone https://github.com/ruslangetmansky/docker-apache-php.git
 cd docker-apache-php
 docker build -t="$USER/docker-apache-php" .
 ```
@@ -39,7 +50,7 @@ Quick Start
 Run the application image:
 
 ```bash
-docker run --name app -d -p 8080:80 romeoz/docker-apache-php
+docker run --name app -d -p 8080:80 ruslangetmansky/docker-apache-php
 ```
 
 The simplest way to login to the app container is to use the `docker exec` command to attach a new process to the running container.
@@ -58,10 +69,31 @@ The updated run command looks like this.
 ```bash
 docker run --name app -d -p 8080:80 \
   -v /host/to/path/app:/var/www/app/ \
-  romeoz/docker-apache-php
+  ruslangetmansky/docker-apache-php
 ```
 
 This will make the development.
+
+Custom DocumentRoot
+-------------------
+By default virtual host document root matches the root of application `/var/www/app/`. That can be changed with `APACHE_DOC_ROOT` environment variable:
+
+```bash
+docker run --name app -d -p 8080:80 \
+  -v /host/to/path/app:/var/www/app/ \
+  -e APACHE_DOC_ROOT='/var/www/app/public' \
+  ruslangetmansky/docker-apache-php
+```
+
+`docker-compose.yml` example:
+```yaml
+web:
+  image: ruslangetmansky/docker-apache-php:5.5
+  volumes:
+    - .:/var/www/app
+  environment:
+    - APACHE_DOC_ROOT=/var/www/app/public
+```
 
 Linked to other container
 -------------------
@@ -78,7 +110,7 @@ Run the application image:
 docker run --name app -d -p 8080:80 \
   --link db:db \
   -v /host/to/path/app:/var/www/app/ \
-  romeoz/docker-apache-php
+  ruslangetmansky/docker-apache-php
 ```
 
 Adding PHP-extension
@@ -88,6 +120,12 @@ Install `php5-mongo`:
 
 ```bash
 sudo docker exec -it app bash -c 'apt-get update && apt-get install php5-mongo && rm -rf /var/lib/apt/lists/*'
+```
+
+Install `php5-xdebug`:
+
+```bash
+sudo docker exec -it app bash -c 'apt-get update && apt-get install php5-xdebug && rm -rf /var/lib/apt/lists/* && sed -i '$ a xdebug.remote_enable=On' /etc/php5/apache2/conf.d/20-xdebug.ini && sed -i '$ a xdebug.remote_connect_back=On' /etc/php5/apache2/conf.d/20-xdebug.ini'
 ```
 
 >See installed php-extension: `sudo docker exec -it app php -m`
