@@ -30,7 +30,7 @@ Installation
 docker pull ruslangetmansky/docker-apache-php
 ```
 
-or other versions (5.6, 5.5, 5.4 or 5.3):
+or other versions (7.0, 5.6, 5.5, 5.4 or 5.3):
 
 ```bash
 docker pull ruslangetmansky/docker-apache-php:5.4
@@ -176,7 +176,7 @@ Out of the box
 -------------------
  * Ubuntu 14.04.3/12.04.5 (LTS)
  * Apache 2.4.x/2.2.x
- * PHP 5.3/5.4/5.5/5.6
+ * PHP 5.3/5.4/5.5/5.6/7.0
  * Composer
 
 >Environment depends on the version of PHP.

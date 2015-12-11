@@ -1,7 +1,7 @@
-FROM ubuntu:precise
+FROM ubuntu:trusty
 MAINTAINER romeOz <serggalka@gmail.com>
 
-ENV PHP_VERSION=5.4 \
+ENV PHP_VERSION=7.0 \
 	OS_LOCALE="en_US.UTF-8"
 RUN locale-gen ${OS_LOCALE}
 ENV LANG ${OS_LOCALE}
@@ -12,13 +12,15 @@ ENV LC_ALL ${OS_LOCALE}
 ADD ./app /var/www/app/
 ADD ./provisioning /tmp/provisioning/
 
+COPY entrypoint.sh /sbin/entrypoint.sh
+
 WORKDIR /tmp/provisioning/
 
 RUN	\
 	buildDeps='software-properties-common python-software-properties' \
 	# Install ansible
 	&& apt-get update \
-	&& apt-get install --no-install-recommends -y $buildDeps sudo \
+	&& apt-get install --no-install-recommends -y $buildDeps \
 	&& add-apt-repository -y ppa:ansible/ansible \
 	&& apt-get update \
 	&& apt-get install -y ansible \
