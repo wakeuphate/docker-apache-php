@@ -12,8 +12,6 @@ ENV LC_ALL ${OS_LOCALE}
 ADD ./app /var/www/app/
 ADD ./provisioning /tmp/provisioning/
 
-COPY entrypoint.sh /sbin/entrypoint.sh
-
 WORKDIR /tmp/provisioning/
 
 RUN	\
