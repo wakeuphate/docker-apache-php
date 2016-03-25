@@ -116,19 +116,35 @@ docker run --name app -d -p 8080:80 \
 Adding PHP-extension
 -------------------
 
-Install `php5-mongo`:
+You can use one of two choices to install the required php-extensions:
 
-```bash
-sudo docker exec -it app bash -c 'apt-get update && apt-get install php5-mongo && rm -rf /var/lib/apt/lists/*'
+1. `docker exec -it app bash -c 'apt-get update && apt-get install php5-mongo && rm -rf /var/lib/apt/lists/*'`
+
+2. Create your container on based the current. Сontents Dockerfile:
+```
+FROM ruslangetmansky/docker-apache-php:5.6
+
+RUN apt-get update \
+    && apt-get install -y php5-xdebug \
+    && rm -rf /var/lib/apt/lists/* \
+	&& sed -i '$ a xdebug.remote_enable=On' /etc/php5/apache2/conf.d/20-xdebug.ini \
+	&& sed -i '$ a xdebug.remote_connect_back=On' /etc/php5/apache2/conf.d/20-xdebug.ini
+
+WORKDIR /var/www/app/
+
+EXPOSE 80 443
+
+CMD ["/sbin/entrypoint.sh"]
 ```
 
-Install `php5-xdebug`:
+Next step,
 
 ```bash
-sudo docker exec -it app bash -c 'apt-get update && apt-get install php5-xdebug && rm -rf /var/lib/apt/lists/* && sed -i '$ a xdebug.remote_enable=On' /etc/php5/apache2/conf.d/20-xdebug.ini && sed -i '$ a xdebug.remote_connect_back=On' /etc/php5/apache2/conf.d/20-xdebug.ini'
+docker build -t php-5.6 .
+docker run --name app -d -p 8080:80 php-5.6
 ```
 
->See installed php-extension: `sudo docker exec -it app php -m`
+>See installed php-extension: `docker exec -it app php -m`
 
 Logging
 -------------------
@@ -174,7 +190,7 @@ Create the file /etc/logrotate.d/docker-containers with the following text insid
 
 Out of the box
 -------------------
- * Ubuntu 14.04.3/12.04.5 (LTS)
+ * Ubuntu 14.04/12.04 (LTS)
  * Apache 2.4.x/2.2.x
  * PHP 5.3/5.4/5.5/5.6/7.0
  * Composer
