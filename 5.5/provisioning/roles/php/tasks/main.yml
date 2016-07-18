@@ -22,7 +22,7 @@
   tags: php
 
 - name: Configure PHP settings
-  template: src=php.ini dest=/etc/php5/apache2/conf.d/custom.ini
+  template: src=php.ini dest=/etc/php5/cli/conf.d/custom.ini
   tags: php
 
 - name: Chown PHP sessions dir
